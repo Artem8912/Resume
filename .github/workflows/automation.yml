@@ -23,7 +23,7 @@ jobs:
         with:
           # Те самые "секреты" из настроек репозитория
           username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
+          password: ${{ secrets.DOCKERHUB_TOKEN}}
       -
         name: Build and push
         uses: docker/build-push-action@v5
