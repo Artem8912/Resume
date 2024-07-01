@@ -6,7 +6,7 @@ name: "automate-all-the-things1"
 on:
   push:
     branches:
-      - 'master'
+      - 'main'
 
 # Задачи, которые будут выполняться в рамках флоу
 jobs:
