@@ -14,4 +14,4 @@ def load_env():
     env=Env()
     env.read_env()
     return Config(
-        Tg_bot(bot_token=env('BOT_TOKEN')))
+        Tg_bot(bot_token=env('BOT_TOKEN1')))

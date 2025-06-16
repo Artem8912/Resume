@@ -5,7 +5,7 @@ from aiogram import F, Router,Bot,Dispatcher
 from aiogram.filters import Command, CommandStart
 from aiogram.types import CallbackQuery, Message
 from Service.Database import (edit_monitor_info,db_start,
-                              delete_table,delete_request,ordered_request)
+                              delete_table,delete_request,ordered_request,get_ids,show_request)
 from Keyboards.keyboards import get_kb,get_cancel_kb,get_database,order
 from States.states import MonitorInfo
 import random as r
@@ -65,10 +65,16 @@ async def set_criteria(callback:CallbackQuery):
 
    
 @user_router.message(F.text.isdigit(),StateFilter(MonitorInfo.Delete_request))
-async def del_request(message:Message):
+async def del_request(message:Message,state:FSMContext):
+    list_ids = await get_ids()
     
-    await delete_request(int(message.text))
-    await message.answer('Ваш запрос успешно удалён!',reply_markup=get_kb())
+    if int(message.text) in list_ids:
+            
+        await delete_request(int(message.text))
+        await message.answer('Ваш запрос успешно удалён!',reply_markup=get_kb())
+    else:
+        await message.answer('Идентификатор не найден! Введите другой!')
+        await state.set_state(state=MonitorInfo.Delete_request)
 
 @user_router.message(StateFilter(MonitorInfo.Delete_request))
 async def failed_request_number(message:Message):
