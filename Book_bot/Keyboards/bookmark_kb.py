@@ -1,3 +1,5 @@
+# Модуль с функциями, создающими меню-клавиатуры для работы с закладками
+
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from LEXICON.lexicon import LEXICON

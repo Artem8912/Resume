@@ -1,4 +1,4 @@
-
+#  Модуль с информацией о конфигурации бота
 import environs
 from environs import Env
 from dataclasses import dataclass

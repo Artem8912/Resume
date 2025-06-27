@@ -1,3 +1,4 @@
+# Модуль с функцией, создающий клавиатуру для перехода между страницами книги
 from aiogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 from aiogram.utils.keyboard import InlineKeyboardBuilder
 from LEXICON.lexicon import LEXICON

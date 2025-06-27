@@ -1,3 +1,4 @@
+# Модуль, содержащий объекты состояний бота
 from aiogram.fsm.state import StatesGroup,State
 
 class MonitorInfo(StatesGroup):
@@ -9,3 +10,4 @@ class MonitorInfo(StatesGroup):
     Color = State()
     Delete_request = State()
     Select_request = State()
+    Show_requests = State()

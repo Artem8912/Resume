@@ -1,3 +1,5 @@
+# Модуль, содержащий роутер для обработки прочих сообщений
+
 from aiogram import Router
 from aiogram.types import Message
 from fluentogram import TranslatorRunner
@@ -6,6 +8,10 @@ other_router =Router()
 
 if TYPE_CHECKING:
     from locales.stub import TranslatorRunner
+
+@other_router.message()
+async def ans(message: Message):
+        await message.answer(text = 'Введите инлайн запрос!')
 
 @other_router.message()
 async def send_echo(message:Message,i18n:TranslatorRunner):

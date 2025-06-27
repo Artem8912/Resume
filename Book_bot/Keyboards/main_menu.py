@@ -1,3 +1,5 @@
+# Модуль с функцией, создающей клавиатуру для главного меню
+
 from aiogram import Bot
 from aiogram.types import BotCommand
 

@@ -1,3 +1,4 @@
+# Хэндлер с миддварью, фильтрующей входной апдейт от пользователя
 import logging
 from typing import Any, Awaitable, Callable, Dict
 

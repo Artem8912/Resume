@@ -1,4 +1,4 @@
-
+# Файл, содержащий информацию о файле конфигурации
 import environs
 from environs import Env
 from dataclasses import dataclass

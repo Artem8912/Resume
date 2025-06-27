@@ -1,3 +1,4 @@
+# Модуль,, содержащий функцию, рабивающую книгу на страницы
 from Service.file_handling import _get_part_text,book
 
 BOOK_PATH = 'book/book.txt'

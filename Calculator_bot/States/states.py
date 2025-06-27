@@ -1,3 +1,4 @@
+# Модуль, содержащий состояния диалогового окна
 from aiogram.fsm.context import FSMContext
 from aiogram.fsm.state import State,StatesGroup
 

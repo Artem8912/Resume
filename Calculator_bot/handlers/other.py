@@ -1,3 +1,4 @@
+#  Модуль, содержащий хэндлер для обработки некорректных команд
 from aiogram import Router
 from aiogram import F,Bot
 from aiogram.types import Message,CallbackQuery

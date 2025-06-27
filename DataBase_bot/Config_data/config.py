@@ -1,3 +1,4 @@
+# Модуль, содержащий информацию о файле конфигурации
 from dataclasses import dataclass
 from environs import Env
 

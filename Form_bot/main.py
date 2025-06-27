@@ -1,3 +1,5 @@
+# Бот-анкета
+# Импортируем необходимые классы и методы
 from aiogram.types import Message,CallbackQuery,InlineKeyboardButton,InlineKeyboardMarkup
 from aiogram import Bot,Dispatcher,F
 from aiogram.client.default import DefaultBotProperties
@@ -14,13 +16,15 @@ from aiogram_dialog import Dialog,DialogManager,Window,widgets
 from aiogram_dialog.widgets.text import Const,Format
 from aiogram_dialog.widgets.utils import Group,List
 
-
+# Загружаем файл конфигурации
 conf = load_config()
 
+# Создаём объект диспетчера
 dp = Dispatcher()
+# Создаём объект бота
 bot = Bot(token=conf.tg_bot.bot_token,default=DefaultBotProperties(parse_mode='HTML'))
 
- 
+#  Содаём группу состояний нашего бота
 class StatesForm(StatesGroup):
     Name = State()
     Surname = State()
@@ -30,6 +34,7 @@ class StatesForm(StatesGroup):
     Photo = State()
     Finish_form = State()
     
+# Создаём фильтр для проверки окончания заполнения анкеты    
 class finished_form_filter(BaseFilter):
     def __init__(self,dat:dict[str,str]):
         self.dat = dat
@@ -37,7 +42,7 @@ class finished_form_filter(BaseFilter):
         
         return len(self.dat) ==len(dp.workflow_data.get('buttons'))+1   
         
-
+# Функция, создающая клавиатуру главного меню
 def get_kb()->InlineKeyboardMarkup:
             
     kb_build = InlineKeyboardBuilder()
@@ -56,14 +61,14 @@ def get_kb()->InlineKeyboardMarkup:
     kb_build.add(*buttons)
     kb_build.adjust(1,2,2)
     return kb_build.as_markup()
-
+# Функция, создающая клавиатуру меню отмены создания анкеты
 def foll_kb():
     kb_b = InlineKeyboardBuilder()
     btns = [InlineKeyboardButton(text = 'Да',callback_data='Yes_foll'),InlineKeyboardButton(text ='Прервать заполнение анкеты',callback_data='No_cancel' )]
     kb_b.add(*btns)
     kb_b.adjust(1,1)
     return kb_b.as_markup()
-    
+# Хэндлер, обрабатывающий команду /start    
 @dp.message(CommandStart())
 async def com_start(message:Message,state:FSMContext):
     await message.answer(text='Приступим к заполнению анкеты. Выберите опцию:',reply_markup=get_kb())
@@ -73,7 +78,7 @@ async def com_start(message:Message,state:FSMContext):
 
     
 
-
+# Хэндлер, обрабатывающий команду ввода имени
 @dp.callback_query(F.data == 'name')
 async def command_name(callback:CallbackQuery,state:FSMContext):
     await callback.message.answer(text='Введите ваше имя')
@@ -95,14 +100,14 @@ async def finished_form(message:Message):
 async def cmd_default(message:Message):
             
     await message.answer(text='Выберите следующую опцию:',reply_markup=foll_kb())
-
+# Хэндлер, обрабатывающий некорректный ввод имени
 @dp.message(StateFilter(StatesForm.Name))
 async def failed_name(message:Message,state:FSMContext):
     await message.answer(text = 'Введите корректное имя')
     await state.set_state(StatesForm.Name)
     
 
-
+# Хэндлер, обрабатывающий команду ввода фамилии
 @dp.callback_query(F.data == 'surname')
 async def command_surname(callback:CallbackQuery,state:FSMContext):
     await callback.message.answer(text='Введите свою фамилию')
@@ -116,12 +121,13 @@ async def enter_surname(message:Message,state:FSMContext):
     
     await message.answer(text= 'Отлично, ваша фамилия сохранена! Продолжить?',reply_markup=foll_kb())
     await state.set_state(default_state)
-
+# Хэндлер, обрабатывающий некорректный ввод фамилии
 @dp.message(StateFilter(StatesForm.Surname))
 async def failed_surname(message:Message,state:FSMContext):
     await message.answer(text = 'Введите корректную фамилию')
     await state.set_state(StatesForm.Surname)    
-    
+
+# Хэндлер, обрабатывающий команду ввода возраста
 @dp.callback_query(F.data == 'age')
 async def command_age(callback:CallbackQuery,state:FSMContext):
     await callback.message.answer(text='Введите ваш возраст')
@@ -133,12 +139,13 @@ async def enter_age(message:Message,state:FSMContext):
     await state.update_data(age = message.text)
     await message.answer(text= 'Отлично, ваш возраст сохранён! Продолжить?',reply_markup=foll_kb())
     await state.set_state(default_state)   
-    
+# Хэндлер, обрабатывающий некорректный ввод возраста    
 @dp.message(StateFilter(StatesForm.Age))
 async def failed_age(message:Message,state:FSMContext):
     await message.answer(text = 'Введите корректный возраст')
     await state.set_state(StatesForm.Age) 
-    
+
+# Хэндлер, обрабатывающий команду ввода пола    
 @dp.callback_query(F.data == 'gender')
 async def command_gender(callback:CallbackQuery,state:FSMContext):
     
@@ -152,6 +159,7 @@ async def command_gender(callback:CallbackQuery,state:FSMContext):
     await callback.message.answer(text = 'Выберите ваш пол',reply_markup=kb_buld.as_markup())
     dp.workflow_data.update({'gender':'gender'})
     await state.set_state(StatesForm.Gender)
+
     
 @dp.callback_query(F.data,StateFilter(StatesForm.Gender))
 async def enter_gender(callback:CallbackQuery,state:FSMContext):
@@ -159,6 +167,7 @@ async def enter_gender(callback:CallbackQuery,state:FSMContext):
     await callback.message.answer(text= 'Отлично, ваш пол сохранён! Продолжить?',reply_markup=foll_kb())
     await state.set_state(default_state)
 
+# Хэндлер, обрабатывающий команду ввода описания
 @dp.callback_query(F.data == 'desk')
 async def command_description(callback:CallbackQuery,state:FSMContext):
     await callback.message.answer(text='Введите ваше описание')
@@ -169,14 +178,16 @@ async def command_description(callback:CallbackQuery,state:FSMContext):
 async def enter_description(message:Message,state:FSMContext):
     await state.update_data(desk = message.text)
     await message.answer(text= 'Отлично, ваше описание сохранёно! Продолжить?',reply_markup=foll_kb())
-    await state.set_state(default_state)       
+    await state.set_state(default_state)   
+    
+# Хэндлер, обрабатывающий команду загрузки фотографии 
 @dp.callback_query(F.data == 'photo')
 async def command_photo(callback:CallbackQuery,state:FSMContext):
     await callback.message.answer(text='Загрузите вашу фотографию')
     
     dp.workflow_data.update({'photo':'photo'})
     await state.set_state(StatesForm.Photo)
-    
+# Хндлер, обрабатывающий загрузку фотографии    
 @dp.message(StateFilter(StatesForm.Photo),F.photo)
 async def load_photo(message:Message,state:FSMContext):
     await state.update_data(photo = message.photo[0].file_id)
@@ -187,19 +198,20 @@ async def load_photo(message:Message,state:FSMContext):
 @dp.callback_query(F.data == 'Yes_foll',~finished_form_filter(dp.workflow_data))
 async def foll(cb:CallbackQuery):
     await cb.message.answer(text = 'Анкета: ',reply_markup=get_kb())
-    
+# Хэндлер, обрабатывающий команду отмены создания анкеты    
 @dp.callback_query(F.data == 'No_cancel')
 async def not_foll(cb:CallbackQuery,state:FSMContext):
     dp.workflow_data.clear()
     await state.clear()
     await cb.message.answer(text= 'Заполнение анкеты прервано - для создания новой нажмите /start')
-
+# Хэндлер, обрабатывающий команду отображения анкеты
 @dp.callback_query(F.data == 'Yes_foll',finished_form_filter(dp.workflow_data),StateFilter(default_state))
 async def watch_frm(cb:CallbackQuery,state:FSMContext):
     await cb.message.answer(text = 'Анкета: ',reply_markup=get_kb())
     await cb.message.answer(text='Для отображения анкеты наберите /watch')
     await state.set_state(StatesForm.Finish_form)
-    
+
+# Хэндлер, обрабатывающий команду отображения заполненной анкеты     
 @dp.message(Command(commands='watch'),StateFilter(StatesForm.Finish_form))
 async def watch_form(message:Message,state:FSMContext):
     form = await state.get_data()
@@ -218,11 +230,11 @@ async def watch_form(message:Message,state:FSMContext):
     dp.workflow_data.clear()
     await message.answer(text = 'Для составления новой анкеты - нажмите /start')    
 
-
+# Хэндлер, обрабатывающий неизвестные команды
 @dp.message()
 async def unkown_command(message:Message):
     await message.answer('Неизвестная команда')
 
-
+# Запускаем бота
 if __name__=='__main__':
     dp.run_polling(bot)
